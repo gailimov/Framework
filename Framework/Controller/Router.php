@@ -132,7 +132,10 @@ class Framework_Controller_Router
             die;
         }
 
+        // Create instance of controller class
+        $obj = new $controller();
+
         // Calling controller's action with parameters
-        call_user_func_array(array($controller, $action), $params);
+        call_user_func_array(array($obj, $action), $params);
     }
 }

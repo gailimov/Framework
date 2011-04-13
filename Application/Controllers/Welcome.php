@@ -6,4 +6,9 @@ class Welcome
     {
         echo 'Hello, ' . $name . '!';
     }
+
+    public function hello($name = 'dude')
+    {
+        echo 'Welcome to the Framework, ' . $name . '!';
+    }
 }
