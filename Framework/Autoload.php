@@ -10,9 +10,7 @@
 
 
 /**
- * Registry
- * 
- * Implementation of Registry design pattern
+ * Autoloading
  * 
  * @author    Kanat Gailimov <gailimov@gmail.com>
  * @category  Framework
@@ -20,24 +18,27 @@
  * @copyright Copyright (c) 2011 Kanat Gailimov (http://gailimov.info)
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3
  */
-class Framework_Registry
+class Framework_Autoload
 {
     /**
      * Singleton instance
      * 
-     * @var Framework_Registry
+     * @var Framework_Autoload
      */
     private static $_instance;
 
     /**
-     * Array of registry
+     * Constructor
      * 
-     * @var array
+     * Registration functions of autoload
+     * 
+     * @return void
      */
-    private $_registry = array();
-
     private function __construct()
-    {}
+    {
+        $this->ensure(spl_autoload_register(array($this, 'load')),
+                      'Could not register ' . __CLASS__ . '\'s autoload function!');
+    }
 
     private function __clone()
     {}
@@ -45,7 +46,7 @@ class Framework_Registry
     /**
      * Singleton instance
      * 
-     * @return Framework_Registry
+     * @return Framework_Autoload
      */
     public static function getInstance()
     {
@@ -56,28 +57,34 @@ class Framework_Registry
     }
 
     /**
-     * Save an object by key into registry
+     * Autoloading
      * 
-     * @param  string $key    Key
-     * @param  object $object Object
+     * @param  string $className Class name
      * @return void
      */
-    public static function set($key, $object)
+    private function load($className)
     {
-        self::getInstance()->_registry[$key] = $object;
+        $path = str_replace('_', DIRECTORY_SEPARATOR, $className);
+        if (file_exists(ROOT_PATH . $path . '.php')) {
+            require_once ROOT_PATH . $path . '.php';
+        } else {
+            header("HTTP/1.0 404 Not Found");
+            echo '404';
+            die;
+        }
     }
 
     /**
-     * Get an object by key from registry
+     * Handling all exceptions
      * 
-     * @param  string $key Key
-     * @return object
+     * @param  string $expr    Expression
+     * @param  string $message Error message
+     * @return void
      */
-    public static function get($key)
+    private function ensure($expr, $message)
     {
-        if (isset(self::getInstance()->_registry[$key])) {
-            return self::getInstance()->_registry[$key];
+        if (!$expr) {
+            throw new Framework_Exception($message);
         }
-        return null;
     }
 }

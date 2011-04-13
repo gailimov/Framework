@@ -23,7 +23,7 @@ class Framework_Config_Config
     /**
      * Singleton instance
      * 
-     * @var Framework_Controller_Config
+     * @var Framework_Config_Config
      */
     private static $_instance;
 
@@ -43,7 +43,7 @@ class Framework_Config_Config
     /**
      * Singleton instance
      * 
-     * @return Framework_Controller_Config
+     * @return Framework_Config_Config
      */
     public static function getInstance()
     {
@@ -71,6 +71,7 @@ class Framework_Config_Config
     /**
      * Get config data
      * 
+     * @param  string $configName Name of the config
      * @return void
      */
     private function getConfig($configName)
@@ -86,7 +87,7 @@ class Framework_Config_Config
     /**
      * Handling all exceptions
      * 
-     * @param  string $expr Expression
+     * @param  string $expr    Expression
      * @param  string $message Error message
      * @return void
      */

@@ -10,28 +10,11 @@
 
 
 /** Defining of root path */
-if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+defined('ROOT_PATH') || define('ROOT_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
-/**
- * Autoloading
- * 
- * @param  string $className Class name
- * @return void
- */
-function frameworkAutoload($className)
-{
-    $path = str_replace('_', DIRECTORY_SEPARATOR, $className);
-    if (file_exists(ROOT_PATH . $path . '.php')) {
-        require_once ROOT_PATH . $path . '.php';
-    } else {
-        header("HTTP/1.0 404 Not Found");
-        echo '404';
-        die;
-    }
-}
+/** Autoloading */
+require_once ROOT_PATH . 'Framework' . DIRECTORY_SEPARATOR . 'Autoload.php';
+Framework_Autoload::getInstance();
 
-/** Register of autoload functions */
-spl_autoload_register('frameworkAutoload');
-
-/** Running of the front controller */
+/** Running of the Front Controller */
 Framework_Controller_Controller::run();
