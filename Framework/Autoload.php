@@ -65,13 +65,13 @@ class Framework_Autoload
     private function load($className)
     {
         $path = str_replace('_', DIRECTORY_SEPARATOR, $className);
-        if (file_exists(ROOT_PATH . $path . '.php')) {
+        //if (file_exists(ROOT_PATH . $path . '.php')) {
             require_once ROOT_PATH . $path . '.php';
-        } else {
-            header("HTTP/1.0 404 Not Found");
-            echo '404';
-            die;
-        }
+        //} else {
+        //    header("HTTP/1.0 404 Not Found");
+        //    echo '404';
+        //    die;
+        //}
     }
 
     /**

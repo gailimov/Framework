@@ -32,10 +32,12 @@ class Framework_Config_Config
      * 
      * @var string
      */
-    private $_config = 'Application/Config/';
+    private $_config;
 
     private function __construct()
-    {}
+    {
+        $this->_config = ROOT_PATH . 'Application' . DIRECTORY_SEPARATOR . 'Configs' . DIRECTORY_SEPARATOR;
+    }
 
     private function __clone()
     {}
@@ -76,9 +78,9 @@ class Framework_Config_Config
      */
     private function getConfig($configName)
     {
-        $this->ensure(file_exists(ROOT_PATH . $this->_config . $configName . '.php'),
+        $this->ensure(file_exists($this->_config . $configName . '.php'),
                                   'Configuration file not found!');
-        $config = require_once ROOT_PATH . $this->_config . $configName . '.php';
+        $config = require_once $this->_config . $configName . '.php';
         foreach ($config as $key => $value) {
             Framework_Registry::set($key, $config[$key]);
         }
