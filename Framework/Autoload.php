@@ -65,13 +65,13 @@ class Framework_Autoload
     private function load($className)
     {
         $path = str_replace('_', DIRECTORY_SEPARATOR, $className);
-        //if (file_exists(ROOT_PATH . $path . '.php')) {
+        if (file_exists(ROOT_PATH . $path . '.php')) {
             require_once ROOT_PATH . $path . '.php';
-        //} else {
-        //    header("HTTP/1.0 404 Not Found");
-        //    echo '404';
-        //    die;
-        //}
+        } else {
+            header("HTTP/1.0 404 Not Found");
+            echo '404';
+            die;
+        }
     }
 
     /**
@@ -83,8 +83,16 @@ class Framework_Autoload
      */
     private function ensure($expr, $message)
     {
-        if (!$expr) {
-            throw new Framework_Exception($message);
+        try {
+            if (!$expr) {
+                throw new Framework_Exception($message);
+            }
+        } catch (Framework_Exception $e) {
+            if (ERROR_MODE == 'production') {
+                die($e->showErrorOnProduction());
+            } else {
+                die($e->showErrorOnDevelopment());
+            }
         }
     }
 }

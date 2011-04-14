@@ -12,6 +12,9 @@
 /** Defining of root path */
 defined('ROOT_PATH') || define('ROOT_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
+/** Defining of error mode development/production */
+defined('ERROR_MODE') || define('ERROR_MODE', 'development');
+
 /** Autoloading */
 require_once ROOT_PATH . 'Framework' . DIRECTORY_SEPARATOR . 'Autoload.php';
 Framework_Autoload::getInstance();

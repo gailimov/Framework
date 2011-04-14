@@ -137,8 +137,16 @@ class Framework_View
      */
     private function ensure($expr, $message)
     {
-        if (!$expr) {
-            throw new Framework_Exception($message);
+        try {
+            if (!$expr) {
+                throw new Framework_Exception($message);
+            }
+        } catch (Framework_Exception $e) {
+            if (ERROR_MODE == 'production') {
+                die($e->showErrorOnProduction());
+            } else {
+                die($e->showErrorOnDevelopment());
+            }
         }
     }
 }
