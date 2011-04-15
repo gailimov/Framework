@@ -14,7 +14,7 @@
  * 
  * @author    Kanat Gailimov <gailimov@gmail.com>
  * @category  Framework
- * @package   Framework_Controller_Router
+ * @package   Framework_Controller
  * @copyright Copyright (c) 2011 Kanat Gailimov (http://gailimov.info)
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3
  */
@@ -96,13 +96,13 @@ class Framework_Controller_Router
         $params = array();
 
         if ($segments[0] == 'index.php') {
-            $controller = ucfirst($segments[1]);
+            $controller = ucfirst($segments[1]) . 'Controller';
             $action = $segments[2];
             if (count($segments) > 3) {
                 $params = array_slice($segments, 3);
             }
         } else {
-            $controller = ucfirst($segments[0]);
+            $controller = ucfirst($segments[0]) . 'Controller';
             $action = $segments[1];
             if (count($segments) > 2) {
                 $params = array_slice($segments, 2);
@@ -110,9 +110,9 @@ class Framework_Controller_Router
         }
 
         // If there is no controller - set the default controller
-        if (empty($controller)) {
+        if (empty($controller) || $controller == 'Controller') {
             $this->_config->init('routes');
-            $controller = Framework_Registry::get('defaultController');
+            $controller = Framework_Registry::get('defaultController') . 'Controller';
         }
 
         // If there is no action - set the default action

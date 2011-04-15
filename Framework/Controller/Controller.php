@@ -14,7 +14,7 @@
  * 
  * @author    Kanat Gailimov <gailimov@gmail.com>
  * @category  Framework
- * @package   Framework_Controller_Router
+ * @package   Framework_Controller
  * @copyright Copyright (c) 2011 Kanat Gailimov (http://gailimov.info)
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3
  */
@@ -31,7 +31,7 @@ class Framework_Controller_Controller
     public static function run()
     {
         $instance = new Framework_Controller_Controller();
-        //$instance->init();
+        $instance->init('db');
         $instance->handleRequest();
     }
 
@@ -40,11 +40,11 @@ class Framework_Controller_Controller
      * 
      * @return void
      */
-    /*public function init()
+    public function init($configName)
     {
         $config = Framework_Config_Config::getInstance();
-        $config->init();
-    }*/
+        $config->init($configName);
+    }
 
     /**
      * Handling of request

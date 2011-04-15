@@ -14,7 +14,7 @@
  * 
  * @author    Kanat Gailimov <gailimov@gmail.com>
  * @category  Framework
- * @package   Framework_Controller_Router
+ * @package   Framework_View
  * @copyright Copyright (c) 2011 Kanat Gailimov (http://gailimov.info)
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3
  */
@@ -128,7 +128,7 @@ class Framework_View
         echo $this->fetch($template, $data);
     }
 
-     /**
+    /**
      * Handling all exceptions
      * 
      * @param  string $expr    Expression
