@@ -49,7 +49,7 @@ class Framework_Db_Mysql implements Framework_Db_Interface
             die($e->getMessage());
         }
 
-        $query = $this->_db->query("SET NAMES utf8");
+        $query = $this->_db->query("SET NAMES " . $charset);
 
         $this->ensure($query, 'Error in SQL-query');
 
