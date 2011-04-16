@@ -10,7 +10,7 @@
 
 
 /**
- * Database interface
+ * Interface class for Framework_Db (database)
  * 
  * @author    Kanat Gailimov <gailimov@gmail.com>
  * @category  Framework

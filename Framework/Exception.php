@@ -27,20 +27,21 @@ class Framework_Exception extends Exception
      */
     public function showErrorOnDevelopment()
     {
-        $exception  = '<h1>Framework &mdash; Error #' . $this->getCode() . '</h1>' . "\n";
-        $exception .= '<p>' . $this->getMessage() . '</p>' . "\n";
-        $exception .= '<h2>File</h2>' . "\n";
-        $exception .= '<p>' . $this->getFile() . '</p>' . "\n";
-        $exception .= '<h2>Line</h2>' . "\n";
-        $exception .= '<p>' . $this->getLine() . '</p>' . "\n";
+        $exception  = '<header><h1>Framework :: Error #' . $this->getCode() . '</h1></header>' . "\n";
+        $exception .= '<article><header><h2>Message:</h2></header>' . "\n";
+        $exception .= '<p>' . $this->getMessage() . '</p></article>' . "\n";
+        $exception .= '<article><header><h2>File</h2></header>' . "\n";
+        $exception .= '<p>' . $this->getFile() . '</p></article>' . "\n";
+        $exception .= '<article><header><h2>Line</h2></header>' . "\n";
+        $exception .= '<p>' . $this->getLine() . '</p></article>' . "\n";
         $trace = $this->getTrace();
-        $exception .= '<h2>Class</h2>' . "\n";
+        $exception .= '<article><header><h2>Class</h2></header>' . "\n";
         if ($trace[0]['class'] != '') {
             $exception .= '<p>' . $trace[0]['class'];
-            $exception .= '->';
+            $exception .= $trace[0]['type'];
         }
         $exception .= $trace[0]['function'];
-        $exception .= '();</p>';
+        $exception .= '();</p></article>' . "\n";
 
         return $exception;
     }
@@ -52,6 +53,9 @@ class Framework_Exception extends Exception
      */
     public function showErrorOnProduction()
     {
-        return 'Error';
+        $message  = '<header><h1>Framework :: Error</h1></header>' . "\n";
+        $message .= '<article><p>An error has occurred.</p></article>' . "\n";
+
+        return $message;
     }
 }

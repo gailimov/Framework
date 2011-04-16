@@ -12,8 +12,8 @@
 /**
  * Concrete View class
  * 
- * Standard view class uses the native PHP. For use another template engine,
- * create a new class extending Framework_View_Abstract.
+ * Standard view class uses the native PHP.
+ * For use another template engine, create a new class extending Framework_View_Abstract.
  * For details @see Framework_View_Abstract
  * 
  * @author    Kanat Gailimov <gailimov@gmail.com>

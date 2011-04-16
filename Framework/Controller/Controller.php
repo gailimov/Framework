@@ -31,19 +31,19 @@ class Framework_Controller_Controller
     public static function run()
     {
         $instance = new Framework_Controller_Controller();
-        $instance->init('db');
-        $instance->handleRequest();
+        $instance->init('db')->handleRequest();
     }
 
     /**
      * Initialize
      * 
-     * @return void
+     * @return Framework_Controller_Controller
      */
     public function init($configName)
     {
-        $config = Framework_Config_Config::getInstance();
-        $config->init($configName);
+        $config = Framework_Config_Config::getInstance()->init($configName);
+
+        return $this;
     }
 
     /**

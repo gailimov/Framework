@@ -36,7 +36,7 @@ class Framework_Config_Config
 
     private function __construct()
     {
-        $this->_config = ROOT_PATH . 'Application' . DIRECTORY_SEPARATOR . 'Configs' . DIRECTORY_SEPARATOR;
+        $this->_config = ROOT_PATH . 'Application' . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR;
     }
 
     private function __clone()
@@ -100,11 +100,14 @@ class Framework_Config_Config
                 throw new Framework_Config_Exception($message);
             }
         } catch (Framework_Config_Exception $e) {
-            if (ERROR_MODE == 'production') {
-                die($e->showErrorOnProduction());
+            if (ERROR_MODE == 'development') {
+                $message = $e->showErrorOnDevelopment();
             } else {
-                die($e->showErrorOnDevelopment());
+                $message = $e->showErrorOnProduction();
             }
+            $title = 'Framework :: Error';
+            include_once ROOT_PATH . 'Application' . DIRECTORY_SEPARATOR . 'errors' . DIRECTORY_SEPARATOR . 'error.php';
+            die;
         }
     }
 }

@@ -204,11 +204,14 @@ abstract class Framework_View_Abstract implements Framework_View_Interface
                 throw new Framework_View_Exception($message);
             }
         } catch (Framework_View_Exception $e) {
-            if (ERROR_MODE == 'production') {
-                die($e->showErrorOnProduction());
+            if (ERROR_MODE == 'development') {
+                $message = $e->showErrorOnDevelopment();
             } else {
-                die($e->showErrorOnDevelopment());
+                $message = $e->showErrorOnProduction();
             }
+            $title = 'Framework :: Error';
+            include_once ROOT_PATH . 'Application' . DIRECTORY_SEPARATOR . 'errors' . DIRECTORY_SEPARATOR . 'error.php';
+            die;
         }
     }
 }

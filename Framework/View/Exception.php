@@ -27,31 +27,32 @@ class Framework_View_Exception extends Framework_Exception
      */
     public function showErrorOnDevelopment()
     {
-        $exception  = '<h1>Framework &mdash; Error #' . $this->getCode() . '</h1>' . "\n";
-        $exception .= '<p>' . $this->getMessage() . '</p>' . "\n";
-        $exception .= '<h2>File</h2>' . "\n";
-        $exception .= '<p>' . $this->getFile() . '</p>' . "\n";
-        $exception .= '<h2>Line</h2>' . "\n";
-        $exception .= '<p>' . $this->getLine() . '</p>' . "\n";
-        $trace = $this->getTrace();
-        $exception .= '<h2>Class</h2>' . "\n";
+        $trace      = $this->getTrace();
+        $exception  = '<header><h1>Framework :: Error #' . $this->getCode() . '</h1></header>' . "\n";
+        $exception .= '<article><header><h2>Message:</h2></header>' . "\n";
+        $exception .= '<p>' . $this->getMessage() . '</p></article>' . "\n";
+        $exception .= '<article><header><h2>File</h2></header>' . "\n";
+        $exception .= '<p>' . $this->getFile() . '</p></article>' . "\n";
+        $exception .= '<article><header><h2>Line</h2></header>' . "\n";
+        $exception .= '<p>' . $this->getLine() . '</p></article>' . "\n";
+        $exception .= '<article><header><h2>Class::method</h2></header>' . "\n";
         if ($trace[0]['class'] != '') {
             $exception .= '<p>' . $trace[0]['class'];
-            $exception .= '->';
+            $exception .= $trace[0]['type'];
         }
         $exception .= $trace[0]['function'];
-        $exception .= '();</p>';
+        $exception .= '();</p></article>' . "\n";
+        $exception .= '<article><header><h2>Trace</h2></header>' . "\n";
+        $i = -1;
+        foreach ($trace as $one) {
+            $i++;
+            $exception .= '<p>' . $i . '</p>' . "\n";
+            $exception .= '<ul><li><strong>File</strong>: ' . $one['file'] . '</li>' . "\n";
+            $exception .= '<li><strong>Line</strong>: ' . $one['line'] . '</li>' . "\n";
+            $exception .= '<li><strong>Class::method</strong>: ' . $one['class'] . $one['type'] . $one['function'] . '();</li></ul>' . "\n";
+        }
+        $exception .= '</article>' . "\n";
 
         return $exception;
-    }
-
-    /**
-     * Show error on production mode
-     * 
-     * @return string
-     */
-    public function showErrorOnProduction()
-    {
-        return 'Error';
     }
 }

@@ -110,11 +110,7 @@ class Framework_Db_Mysql implements Framework_Db_Interface
      */
     private function handleError($e, $method = '')
     {
-        if (ERROR_MODE == 'production') {
-            $title    = 'Framework :: Error';
-            $message  = '<header><h1>Framework :: Error</h1></header>' . "\n";
-            $message .= '<article><p>An error has occurred.</p></article>' . "\n";
-        } else {
+        if (ERROR_MODE == 'development') {
             if ($this->_db instanceof PDO) {
                 // SQL-query errors
                 $title      = 'Framework :: Error in SQL-query';
@@ -130,7 +126,7 @@ class Framework_Db_Mysql implements Framework_Db_Interface
                 $message   .= '<p>' . $e->getFile() . '</p></article>' . "\n";
                 $message   .= '<article><header><h2>Line</h2></header>' . "\n";
                 $message   .= '<p>' . $e->getLine() . '</p></article>' . "\n";
-                $message   .= '<article><header><h2>Method</h2></header>' . "\n";
+                $message   .= '<article><header><h2>Class::method</h2></header>' . "\n";
                 $message   .= '<p>' . $method . '();</p></article>';
             } else {
                 // Connection errors
@@ -143,7 +139,7 @@ class Framework_Db_Mysql implements Framework_Db_Interface
                 $message   .= '<article><header><h2>Line</h2></header>' . "\n";
                 $message   .= '<p>' . $e->getLine() . '</p></article>' . "\n";
                 $trace      = $e->getTrace();
-                $message   .= '<article><header><h2>Method</h2></header>' . "\n";
+                $message   .= '<article><header><h2>Class::method</h2></header>' . "\n";
                 if ($trace[0]['class'] != '') {
                     $message .= '<p>' . $trace[1]['class'];
                     $message .= $trace[1]['type'];
@@ -151,8 +147,12 @@ class Framework_Db_Mysql implements Framework_Db_Interface
                 $message .= $trace[1]['function'];
                 $message .= '();</p></article>' . "\n";
             }
+        } else {
+            $title    = 'Framework :: Error';
+            $message  = '<header><h1>Framework :: Error</h1></header>' . "\n";
+            $message .= '<article><p>An error has occurred.</p></article>' . "\n";
         }
-        include_once ROOT_PATH . 'Application/Errors/db.php';
+        include_once ROOT_PATH . 'Application' . DIRECTORY_SEPARATOR . 'errors' . DIRECTORY_SEPARATOR . 'db.php';
         die;
     }
 }

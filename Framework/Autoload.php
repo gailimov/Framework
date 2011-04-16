@@ -9,7 +9,7 @@
  */
 
 
-/** Framework_Exception */
+/** @see Framework_Exception */
 require_once 'Exception.php';
 
 /**
@@ -91,10 +91,10 @@ class Framework_Autoload
                 throw new Framework_Exception($message);
             }
         } catch (Framework_Exception $e) {
-            if (ERROR_MODE == 'production') {
-                die($e->showErrorOnProduction());
-            } else {
+            if (ERROR_MODE == 'development') {
                 die($e->showErrorOnDevelopment());
+            } else {
+                die($e->showErrorOnProduction());
             }
         }
     }

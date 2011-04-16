@@ -121,9 +121,9 @@ class Framework_Controller_Router
         }
 
         $controllerFile = ROOT_PATH . 'Application/Controllers/' . $controller . '.php';
-        if (file_exists($controllerFile)) {
-            require_once $controllerFile;
-        }
+        $this->ensure(file_exists($controllerFile),
+                      'File of controller class ' . $controllerFile . ' not found');
+        require_once $controllerFile;
 
         // If the class of controller is not loaded or there is no necessary method - 404
         if (!is_callable(array($controller, $action))) {
@@ -137,5 +137,30 @@ class Framework_Controller_Router
 
         // Calling controller's action with parameters
         call_user_func_array(array($obj, $action), $params);
+    }
+
+    /**
+     * Handling all exceptions
+     * 
+     * @param  string $expr    Expression
+     * @param  string $message Error message
+     * @return void
+     */
+    private function ensure($expr, $message)
+    {
+        try {
+            if (!$expr) {
+                throw new Framework_Controller_Exception($message);
+            }
+        } catch (Framework_Controller_Exception $e) {
+            if (ERROR_MODE == 'development') {
+                $message = $e->showErrorOnDevelopment();
+            } else {
+                $message = $e->showErrorOnProduction();
+            }
+            $title = 'Framework :: Error';
+            include_once ROOT_PATH . 'Application' . DIRECTORY_SEPARATOR . 'errors' . DIRECTORY_SEPARATOR . 'error.php';
+            die;
+        }
     }
 }
