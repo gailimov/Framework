@@ -46,12 +46,30 @@ class Framework_Db_Mysql implements Framework_Db_Interface
         try {
             $this->_db = new PDO('mysql:host=' . $host . ';dbname=' . $name, $user, $password);
         } catch (PDOException $e) {
-            die($e->getMessage());
+            if (ERROR_MODE == 'production') {
+                die('Error');
+            } else {
+                if (ERROR_MODE == 'production') {
+                    die('Error');
+                } else {
+                    $this->handleError($e);
+                }
+            }
         }
 
         $query = $this->_db->query("SET NAMES " . $charset);
 
-        $this->ensure($query, 'Error in SQL-query');
+        try {
+            if (!$query) {
+                throw new PDOException($e);
+            }
+        } catch (PDOException $e) {
+            if (ERROR_MODE == 'production') {
+                die('Error');
+            } else {
+                $this->handleError($e, __METHOD__);
+            }
+        }
 
         Framework_Registry::set('db', $this->_db);
     }
@@ -64,43 +82,85 @@ class Framework_Db_Mysql implements Framework_Db_Interface
      */
     public function fetchAssoc($query)
     {
-        $res = $this->_db->query($query);
+        $result = $this->_db->query($query);
 
-        $this->ensure($res, 'Error in SQL-query!');
+        try {
+            if (!$result) {
+                throw new PDOException($e);
+            }
+        } catch (PDOException $e) {
+            if (ERROR_MODE == 'production') {
+                die('Error');
+            } else {
+                $this->handleError($e, __METHOD__);
+            }
+        }
 
         $data = array();
 
-        while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
             $data[] = $row;
         }
 
         return $data;
     }
 
+    /**
+     * Destructor
+     * 
+     * Close database connection
+     * 
+     * @return void
+     */
     public function __destruct()
     {
         $this->_db = null;
     }
-    
+
     /**
-     * Handling all exceptions
+     * Errors handler
      * 
-     * @param  string $expr    Expression
-     * @param  string $message Error message
+     * @param  obj    $e      Instance of PDOException class
+     * @param  string $method __METHOD__ (optional)
      * @return void
      */
-    private function ensure($expr, $message)
+    private function handleError($e, $method = '')
     {
-        try {
-            if (!$expr) {
-                throw new PDOException($message);
-            }
-        } catch (PDOException $e) {
-            if (ERROR_MODE == 'production') {
-                die('Error');
-            } else {
-                die($e->getMessage());
-            }
+        // SQL-query errors
+        if ($this->_db instanceof PDO) {
+            $message  = '<h1>Framework &mdash; Error in SQL-query</h1>' . "\n";
+            $errorInfo = $this->_db->errorInfo();
+            $message .= '<h2>SQLSTATE error code</h2>' . "\n";
+            $message .= '<p>' . $errorInfo['0'] . '</p>' . "\n";
+            $message .= '<h2>MySQL error code</h2>' . "\n";
+            $message .= '<p>' . $errorInfo['1'] . '</p>' . "\n";
+            $message .= '<h2>Message</h2>' . "\n";
+            $message .= '<p>' . $errorInfo['2'] . '</p>' . "\n";
+            $message .= '<h2>File</h2>' . "\n";
+            $message .= '<p>' . $e->getFile() . '</p>' . "\n";
+            $message .= '<h2>Line</h2>' . "\n";
+            $message .= '<p>' . $e->getLine() . '</p>' . "\n";
+            $message .= '<h2>Method</h2>' . "\n";
+            $message .= '<p>' . $method . '();</p>';
+            die($message);
         }
+
+        // Connection errors
+        $message  = '<h1>Framework &mdash; Database connection error</h1>' . "\n";
+        $message .= '<h2>Message</h2>' . "\n";
+        $message .= '<p>' . $e->getMessage() . '</p>' . "\n";
+        $message .= '<h2>File</h2>' . "\n";
+        $message .= '<p>' . $e->getFile() . '</p>' . "\n";
+        $message .= '<h2>Line</h2>' . "\n";
+        $message .= '<p>' . $e->getLine() . '</p>' . "\n";
+        $trace    = $e->getTrace();
+        $message .= '<h2>Method</h2>' . "\n";
+        if ($trace[0]['class'] != '') {
+            $message .= '<p>' . $trace[1]['class'];
+            $message .= $trace[1]['type'];
+        }
+        $message .= $trace[1]['function'];
+        $message .= '();</p>';
+        die($message);
     }
 }

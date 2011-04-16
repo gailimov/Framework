@@ -68,26 +68,4 @@ class Framework_View extends Framework_View_Abstract
     {
         echo $this->fetch($template, $data);
     }
-
-    /**
-     * Handling all exceptions
-     * 
-     * @param  string $expr    Expression
-     * @param  string $message Error message
-     * @return void
-     */
-    protected function ensure($expr, $message)
-    {
-        try {
-            if (!$expr) {
-                throw new Framework_Exception($message);
-            }
-        } catch (Framework_Exception $e) {
-            if (ERROR_MODE == 'production') {
-                die($e->showErrorOnProduction());
-            } else {
-                die($e->showErrorOnDevelopment());
-            }
-        }
-    }
 }

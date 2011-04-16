@@ -201,9 +201,9 @@ abstract class Framework_View_Abstract implements Framework_View_Interface
     {
         try {
             if (!$expr) {
-                throw new Framework_Exception($message);
+                throw new Framework_View_Exception($message);
             }
-        } catch (Framework_Exception $e) {
+        } catch (Framework_View_Exception $e) {
             if (ERROR_MODE == 'production') {
                 die($e->showErrorOnProduction());
             } else {
