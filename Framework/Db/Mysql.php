@@ -46,15 +46,7 @@ class Framework_Db_Mysql implements Framework_Db_Interface
         try {
             $this->_db = new PDO('mysql:host=' . $host . ';dbname=' . $name, $user, $password);
         } catch (PDOException $e) {
-            if (ERROR_MODE == 'production') {
-                die('Error');
-            } else {
-                if (ERROR_MODE == 'production') {
-                    die('Error');
-                } else {
-                    $this->handleError($e);
-                }
-            }
+            $this->handleError($e);
         }
 
         $query = $this->_db->query("SET NAMES " . $charset);
@@ -64,11 +56,7 @@ class Framework_Db_Mysql implements Framework_Db_Interface
                 throw new PDOException($e);
             }
         } catch (PDOException $e) {
-            if (ERROR_MODE == 'production') {
-                die('Error');
-            } else {
-                $this->handleError($e, __METHOD__);
-            }
+            $this->handleError($e, __METHOD__);
         }
 
         Framework_Registry::set('db', $this->_db);
@@ -89,11 +77,7 @@ class Framework_Db_Mysql implements Framework_Db_Interface
                 throw new PDOException($e);
             }
         } catch (PDOException $e) {
-            if (ERROR_MODE == 'production') {
-                die('Error');
-            } else {
-                $this->handleError($e, __METHOD__);
-            }
+            $this->handleError($e, __METHOD__);
         }
 
         $data = array();
@@ -126,41 +110,49 @@ class Framework_Db_Mysql implements Framework_Db_Interface
      */
     private function handleError($e, $method = '')
     {
-        // SQL-query errors
-        if ($this->_db instanceof PDO) {
-            $message  = '<h1>Framework &mdash; Error in SQL-query</h1>' . "\n";
-            $errorInfo = $this->_db->errorInfo();
-            $message .= '<h2>SQLSTATE error code</h2>' . "\n";
-            $message .= '<p>' . $errorInfo['0'] . '</p>' . "\n";
-            $message .= '<h2>MySQL error code</h2>' . "\n";
-            $message .= '<p>' . $errorInfo['1'] . '</p>' . "\n";
-            $message .= '<h2>Message</h2>' . "\n";
-            $message .= '<p>' . $errorInfo['2'] . '</p>' . "\n";
-            $message .= '<h2>File</h2>' . "\n";
-            $message .= '<p>' . $e->getFile() . '</p>' . "\n";
-            $message .= '<h2>Line</h2>' . "\n";
-            $message .= '<p>' . $e->getLine() . '</p>' . "\n";
-            $message .= '<h2>Method</h2>' . "\n";
-            $message .= '<p>' . $method . '();</p>';
-            die($message);
+        if (ERROR_MODE == 'production') {
+            $title    = 'Framework :: Error';
+            $message  = '<header><h1>Framework :: Error</h1></header>' . "\n";
+            $message .= '<article><p>An error has occurred.</p></article>' . "\n";
+        } else {
+            if ($this->_db instanceof PDO) {
+                // SQL-query errors
+                $title      = 'Framework :: Error in SQL-query';
+                $message    = '<header><h1>Framework :: Error in SQL-query</h1></header>' . "\n";
+                $errorInfo  = $this->_db->errorInfo();
+                $message   .= '<article><header><h2>SQLSTATE error code</h2></header>' . "\n";
+                $message   .= '<p>' . $errorInfo['0'] . '</p></article>' . "\n";
+                $message   .= '<article><header><h2>MySQL error code</h2></header>' . "\n";
+                $message   .= '<p>' . $errorInfo['1'] . '</p></article>' . "\n";
+                $message   .= '<article><header><h2>Message</h2></header>' . "\n";
+                $message   .= '<p>' . $errorInfo['2'] . '</p></article>' . "\n";
+                $message   .= '<article><header><h2>File</h2></header>' . "\n";
+                $message   .= '<p>' . $e->getFile() . '</p></article>' . "\n";
+                $message   .= '<article><header><h2>Line</h2></header>' . "\n";
+                $message   .= '<p>' . $e->getLine() . '</p></article>' . "\n";
+                $message   .= '<article><header><h2>Method</h2></header>' . "\n";
+                $message   .= '<p>' . $method . '();</p></article>';
+            } else {
+                // Connection errors
+                $title      = 'Framework :: Database connection error';
+                $message    = '<header><h1>Framework :: Database connection error</h1></header>' . "\n";
+                $message   .= '<article><header><h2>Message</h2></header>' . "\n";
+                $message   .= '<p>' . $e->getMessage() . '</p></article>' . "\n";
+                $message   .= '<article><header><h2>File</h2></header>' . "\n";
+                $message   .= '<p>' . $e->getFile() . '</p></article>' . "\n";
+                $message   .= '<article><header><h2>Line</h2></header>' . "\n";
+                $message   .= '<p>' . $e->getLine() . '</p></article>' . "\n";
+                $trace      = $e->getTrace();
+                $message   .= '<article><header><h2>Method</h2></header>' . "\n";
+                if ($trace[0]['class'] != '') {
+                    $message .= '<p>' . $trace[1]['class'];
+                    $message .= $trace[1]['type'];
+                }
+                $message .= $trace[1]['function'];
+                $message .= '();</p></article>' . "\n";
+            }
         }
-
-        // Connection errors
-        $message  = '<h1>Framework &mdash; Database connection error</h1>' . "\n";
-        $message .= '<h2>Message</h2>' . "\n";
-        $message .= '<p>' . $e->getMessage() . '</p>' . "\n";
-        $message .= '<h2>File</h2>' . "\n";
-        $message .= '<p>' . $e->getFile() . '</p>' . "\n";
-        $message .= '<h2>Line</h2>' . "\n";
-        $message .= '<p>' . $e->getLine() . '</p>' . "\n";
-        $trace    = $e->getTrace();
-        $message .= '<h2>Method</h2>' . "\n";
-        if ($trace[0]['class'] != '') {
-            $message .= '<p>' . $trace[1]['class'];
-            $message .= $trace[1]['type'];
-        }
-        $message .= $trace[1]['function'];
-        $message .= '();</p>';
-        die($message);
+        include_once ROOT_PATH . 'Application/Errors/db.php';
+        die;
     }
 }
