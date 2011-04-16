@@ -9,6 +9,9 @@
  */
 
 
+/** Framework_Exception */
+require_once 'Exception.php';
+
 /**
  * Autoloading
  * 
